@@ -9,13 +9,11 @@ import org.http4s.server.blaze.BlazeBuilder
 
 import scala.concurrent.ExecutionContext
 
-
 object HelloWorldServer extends StreamApp[IO] {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-
-  def stream(args: List[String], requestShutdown: IO[Unit]) = {
+  def stream(args: List[String], requestShutdown: IO[Unit]): fs2.Stream[IO, StreamApp.ExitCode] =
     for {
       ds <- ServerStream.dataSource[IO]
       _ <- fs2.Stream.eval(new FlywayHandler[IO](ds).performMigration)
@@ -25,7 +23,6 @@ object HelloWorldServer extends StreamApp[IO] {
       ec
     }
 
-  }
 }
 
 object ServerStream {
@@ -37,14 +34,15 @@ object ServerStream {
     config
   }
 
-  def dataSource[F[_] : Effect](implicit F: Effect[F]): fs2.Stream[F, HikariDataSource] =
+  def dataSource[F[_]: Effect](implicit F: Effect[F]): fs2.Stream[F, HikariDataSource] =
     fs2.Stream.eval(F.liftIO(IO(new HikariDataSource(hikariConfig))))
 
-  def ingestionRepository[F[_] : Effect](xa:Transactor[F]): IngestionRepository[F] = new IngestionRepository[F](xa)
+  def ingestionRepository[F[_]: Effect](xa: Transactor[F]): IngestionRepository[F] = new IngestionRepository[F](xa)
 
-  def helloWorldService[F[_] : Effect](ingestionRepository: IngestionRepository[F]): HttpService[F] = new HelloWorldService[F](ingestionRepository).service
+  def helloWorldService[F[_]: Effect](ingestionRepository: IngestionRepository[F]): HttpService[F] =
+    new HelloWorldService[F](ingestionRepository).service
 
-  def stream[F[_] : Effect](xa:Transactor[F])(implicit ec: ExecutionContext) =
+  def stream[F[_]: Effect](xa: Transactor[F])(implicit ec: ExecutionContext): fs2.Stream[F, StreamApp.ExitCode] =
     BlazeBuilder[F]
       .bindHttp(8080, "0.0.0.0")
       .mountService(helloWorldService(ingestionRepository(xa)), "/")

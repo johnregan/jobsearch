@@ -13,19 +13,20 @@ import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class HelloWorldService[F[_] : Sync](repository: IngestionRepository[F]) extends Http4sDsl[F] with LazyLogging {
-
+class HelloWorldService[F[_]: Sync](repository: IngestionRepository[F]) extends Http4sDsl[F] with LazyLogging {
 
   val service: HttpService[F] = {
     HttpService[F] {
-      case req@PUT -> Root / "ingest" / source =>
+      case req @ PUT -> Root / "ingest" / source =>
         req.as[Ingestions].flatMap { is =>
-          val potentailRecords = is.jobEntries.map { case IngestRequest(href, description) =>
-            Ingestion(UUID.randomUUID(), href, description, ZonedDateTime.now(), source)
+          val potentailRecords = is.jobEntries.map {
+            case IngestRequest(href, description) =>
+              Ingestion(UUID.randomUUID(), href, description, ZonedDateTime.now(), source)
           }
 
           repository.insert(potentailRecords).attempt.flatMap {
-            case Right(rowsUpdated) if rowsUpdated > 0 => Created(s"Created $rowsUpdated new entries in the database".asJson)
+            case Right(rowsUpdated) if rowsUpdated > 0 =>
+              Created(s"Created $rowsUpdated new entries in the database".asJson)
             case Right(_) => NoContent()
             case Left(error) =>
               logger.error(s"unexpected error when writing source:$source to the database", error)

@@ -26,6 +26,8 @@ lazy val root = (project in file("."))
       "com.zaxxer" % "HikariCP" % "3.2.0",
       "org.postgresql" % "postgresql" % "42.2.2"
     ),
+    scalastyleFailOnError := true,
+
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4"),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

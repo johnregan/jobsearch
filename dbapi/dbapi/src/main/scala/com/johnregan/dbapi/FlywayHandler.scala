@@ -7,10 +7,11 @@ import org.flywaydb.core.Flyway
 
 class FlywayHandler[F[_]](ds: DataSource)(implicit F: Effect[F]) extends LazyLogging {
 
-  def performMigration = F.liftIO {
+  def performMigration: F[Int] = F.liftIO {
     for {
       flyway <- IO {
-        Flyway.configure()
+        Flyway
+          .configure()
           .table("schema_version")
           .dataSource(ds)
           .load()
