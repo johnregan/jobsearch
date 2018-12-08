@@ -1,0 +1,7 @@
+create table INGESTIONS (
+    id UUID NOT NULL PRIMARY KEY,
+    href VARCHAR NOT NULL UNIQUE,
+    description VARCHAR NOT NULL UNIQUE,
+    created_date TIMESTAMP NOT NULL,
+    source VARCHAR(50) NOT NULL
+)
