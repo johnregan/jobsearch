@@ -5,6 +5,8 @@ val ScalaLogging = "3.9.0"
 val FlywayVersion = "5.2.4"
 val DoobieVersion = "0.5.3"
 
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:higherKinds")
+
 lazy val root = (project in file("."))
   .settings(
     organization := "com.johnregan",
