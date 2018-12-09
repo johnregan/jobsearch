@@ -5,7 +5,7 @@ stages:
 
 variables:  
   PROJECT_DIR: "${CI_PROJECT_DIR}/dbapi/dbapi"
-  IVY_LOCATION: "${CI_PROJECT_DIR}/.ivy2"
+  SBT_OPTS: "-Dsbt.global.base=sbt-cache/.sbtboot -Dsbt.boot.directory=sbt-cache/.boot -Dsbt.ivy.home=sbt-cache/.ivy"
 
 lint:
   stage: lint
@@ -13,36 +13,39 @@ lint:
     key: ${CI_COMMIT_REF_NAME}
     paths:
     - ${PROJECT_DIR}/target
-    - ${IVY_LOCATION}
     - ${PROJECT_DIR}/project/project
-    - ${PROJECT_DIR}/project/target
+    - ${PROJECT_DIR}/project/target 
+    - "sbt-cache/.ivy.cache"
+    - "sbt-cache/.boot"
+    - "sbt-cache/.sbtboot"
+    - "sbt-cache/target"
     policy: push
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
   script:
     - cd dbapi/dbapi/
-    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} clean scalastyle
-    - cd ../../
-    - ls -ltrah
+    - sbt clean scalastyle
+
 test:
   stage: test
   cache:
     key: ${CI_COMMIT_REF_NAME}
     paths:
     - ${PROJECT_DIR}/target
-    - ${IVY_LOCATION}
     - ${PROJECT_DIR}/project/project
-    - ${PROJECT_DIR}/project/target
+    - ${PROJECT_DIR}/project/target 
+    - "sbt-cache/.ivy.cache"
+    - "sbt-cache/.boot"
+    - "sbt-cache/.sbtboot"
+    - "sbt-cache/target"
     policy: push
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
   script:
     - cd dbapi/dbapi/
-    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} test   
-    - cd ../
-    - ls -ltrah
+    - sbt test   
 
 build:
   stage: build
@@ -50,14 +53,17 @@ build:
     key: ${CI_COMMIT_REF_NAME}
     paths:
     - ${PROJECT_DIR}/target
-    - ${IVY_LOCATION}
     - ${PROJECT_DIR}/project/project
-    - ${PROJECT_DIR}/project/target
+    - ${PROJECT_DIR}/project/target 
+    - "sbt-cache/.ivy.cache"
+    - "sbt-cache/.boot"
+    - "sbt-cache/.sbtboot"
+    - "sbt-cache/target"
     policy: push
+
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
   script:
     - cd dbapi/dbapi/
-    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} assembly 
-    - ls -ltrah
+    - sbt assembly 
