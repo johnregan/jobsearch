@@ -15,7 +15,7 @@ lint:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
     - ${PROJECT_DIR}/project/target 
-    - "${CI_PROJECT_DIR}/sbt-cache/.ivy.cache"
+    - "${CI_PROJECT_DIR}/sbt-cache/.ivy"
     - "${CI_PROJECT_DIR}/sbt-cache/.boot"
     - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
     - "${CI_PROJECT_DIR}/sbt-cache/target"
@@ -35,7 +35,7 @@ test:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
     - ${PROJECT_DIR}/project/target 
-    - "${CI_PROJECT_DIR}/sbt-cache/.ivy.cache"
+    - "${CI_PROJECT_DIR}/sbt-cache/.ivy"
     - "${CI_PROJECT_DIR}/sbt-cache/.boot"
     - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
     - "${CI_PROJECT_DIR}/sbt-cache/target"
@@ -55,7 +55,7 @@ build:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
     - ${PROJECT_DIR}/project/target 
-    - "${CI_PROJECT_DIR}/sbt-cache/.ivy.cache"
+    - "${CI_PROJECT_DIR}/sbt-cache/.ivy"
     - "${CI_PROJECT_DIR}/sbt-cache/.boot"
     - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
     - "${CI_PROJECT_DIR}/sbt-cache/target"
