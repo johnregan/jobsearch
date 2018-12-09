@@ -20,5 +20,6 @@ build:
   image: hseeberger/scala-sbt:8u171_2.12.6_1.1.6
   script:
     - echo ${SBT_OPTS}
+    - cd dbapi/dbapi/
     - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} clean assembly
     - find / -name x.jar
