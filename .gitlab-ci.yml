@@ -8,7 +8,7 @@ variables:
   IVY_LOCATION: "${PROJECT_DIR}/.ivy2"
 
 lint:
-  stage: build
+  stage: lint
   cache:
     key: ${CI_COMMIT_REF_NAME}
     paths:
