@@ -16,7 +16,7 @@ build:
     - ${CI_PROJECT_DIR}/project/target
     policy: push
   tags:
-    - build-any
+    - kubernetes
   image: hseeberger/scala-sbt:8u171_2.12.6_1.1.6
   script:
     - echo ${SBT_OPTS}
