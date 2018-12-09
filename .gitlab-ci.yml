@@ -10,7 +10,7 @@ variables:
 lint:
   stage: lint
   cache:
-    key: ${CI_COMMIT_REF_NAME}
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
@@ -29,7 +29,7 @@ lint:
 test:
   stage: test
   cache:
-    key: ${CI_COMMIT_REF_NAME}
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
@@ -47,7 +47,7 @@ test:
 build:
   stage: build
   cache:
-    key: ${CI_COMMIT_REF_NAME}
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
