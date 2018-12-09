@@ -7,9 +7,7 @@ variables:
   PROJECT_DIR: "${CI_PROJECT_DIR}/dbapi/dbapi"
   SBT_OPTS: "-Dsbt.global.base=${CI_PROJECT_DIR}/sbt-cache/.sbtboot -Dsbt.boot.directory=${CI_PROJECT_DIR}/sbt-cache/.boot -Dsbt.ivy.home=${CI_PROJECT_DIR}/sbt-cache/.ivy"
 
-lint:
-  stage: lint
-  cache:
+cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - ${PROJECT_DIR}/target
@@ -17,8 +15,10 @@ lint:
     - ${PROJECT_DIR}/project/target 
     - "${CI_PROJECT_DIR}/sbt-cache/.ivy"
     - "${CI_PROJECT_DIR}/sbt-cache/.boot"
-    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
-    policy: push
+    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"    
+
+lint:
+  stage: lint
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
@@ -28,15 +28,6 @@ lint:
 
 test:
   stage: test
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - ${PROJECT_DIR}/target
-    - ${PROJECT_DIR}/project/project
-    - ${PROJECT_DIR}/project/target 
-    - "${CI_PROJECT_DIR}/sbt-cache/.ivy"
-    - "${CI_PROJECT_DIR}/sbt-cache/.boot"
-    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
@@ -46,15 +37,6 @@ test:
 
 build:
   stage: build
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - ${PROJECT_DIR}/target
-    - ${PROJECT_DIR}/project/project
-    - ${PROJECT_DIR}/project/target 
-    - "${CI_PROJECT_DIR}/sbt-cache/.ivy"
-    - "${CI_PROJECT_DIR}/sbt-cache/.boot"
-    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
