@@ -1,25 +1,59 @@
 stages:
+  - lint
   - build
+  - test
 
-variables:
-  IVY_LOCATION: "${CI_PROJECT_DIR}/.ivy2"
-  SBT_OPTS: "-Xms512M -Xmx3G -Xss256m"
+variables:  
+  PROJECT_DIR: "${CI_PROJECT_DIR}/dbapi/dbapi"
+  IVY_LOCATION: "${PROJECT_DIR}/.ivy2"
+
+lint:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+    - ${PROJECT_DIR}/target
+    - ${IVY_LOCATION}
+    - ${PROJECT_DIR}/project/project
+    - ${PROJECT_DIR}/project/target
+    policy: push
+  tags:
+    - kubernetes
+  image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
+  script:
+    - cd dbapi/dbapi/
+    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} clean scalastyle
 
 build:
   stage: build
   cache:
     key: ${CI_COMMIT_REF_NAME}
     paths:
-    - ${CI_PROJECT_DIR}/target
+    - ${PROJECT_DIR}/target
     - ${IVY_LOCATION}
-    - ${CI_PROJECT_DIR}/project/project
-    - ${CI_PROJECT_DIR}/project/target
+    - ${PROJECT_DIR}/project/project
+    - ${PROJECT_DIR}/project/target
     policy: push
   tags:
     - kubernetes
-  image: hseeberger/scala-sbt:8u171_2.12.6_1.1.6
+  image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
   script:
-    - echo ${SBT_OPTS}
     - cd dbapi/dbapi/
-    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} clean assembly
-    - find / -name x.jar
+    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} assembly
+
+test:
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+    - ${PROJECT_DIR}/target
+    - ${IVY_LOCATION}
+    - ${PROJECT_DIR}/project/project
+    - ${PROJECT_DIR}/project/target
+    policy: push
+  tags:
+    - kubernetes
+  image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
+  script:
+    - cd dbapi/dbapi/
+    - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} test    
