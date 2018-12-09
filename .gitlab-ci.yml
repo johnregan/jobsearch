@@ -5,7 +5,7 @@ stages:
 
 variables:  
   PROJECT_DIR: "${CI_PROJECT_DIR}/dbapi/dbapi"
-  SBT_OPTS: "-Dsbt.global.base=sbt-cache/.sbtboot -Dsbt.boot.directory=sbt-cache/.boot -Dsbt.ivy.home=sbt-cache/.ivy"
+  SBT_OPTS: "-Dsbt.global.base=${CI_PROJECT_DIR}/sbt-cache/.sbtboot -Dsbt.boot.directory=${CI_PROJECT_DIR}/sbt-cache/.boot -Dsbt.ivy.home=${CI_PROJECT_DIR}/sbt-cache/.ivy"
 
 lint:
   stage: lint
@@ -15,10 +15,10 @@ lint:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
     - ${PROJECT_DIR}/project/target 
-    - "sbt-cache/.ivy.cache"
-    - "sbt-cache/.boot"
-    - "sbt-cache/.sbtboot"
-    - "sbt-cache/target"
+    - "${CI_PROJECT_DIR}/sbt-cache/.ivy.cache"
+    - "${CI_PROJECT_DIR}/sbt-cache/.boot"
+    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
+    - "${CI_PROJECT_DIR}/sbt-cache/target"
     policy: push
   tags:
     - kubernetes
@@ -35,10 +35,10 @@ test:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
     - ${PROJECT_DIR}/project/target 
-    - "sbt-cache/.ivy.cache"
-    - "sbt-cache/.boot"
-    - "sbt-cache/.sbtboot"
-    - "sbt-cache/target"
+    - "${CI_PROJECT_DIR}/sbt-cache/.ivy.cache"
+    - "${CI_PROJECT_DIR}/sbt-cache/.boot"
+    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
+    - "${CI_PROJECT_DIR}/sbt-cache/target"
     policy: push
   tags:
     - kubernetes
@@ -55,10 +55,10 @@ build:
     - ${PROJECT_DIR}/target
     - ${PROJECT_DIR}/project/project
     - ${PROJECT_DIR}/project/target 
-    - "sbt-cache/.ivy.cache"
-    - "sbt-cache/.boot"
-    - "sbt-cache/.sbtboot"
-    - "sbt-cache/target"
+    - "${CI_PROJECT_DIR}/sbt-cache/.ivy.cache"
+    - "${CI_PROJECT_DIR}/sbt-cache/.boot"
+    - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
+    - "${CI_PROJECT_DIR}/sbt-cache/target"
     policy: push
 
   tags:
