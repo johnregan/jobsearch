@@ -39,7 +39,6 @@ test:
     - "${CI_PROJECT_DIR}/sbt-cache/.boot"
     - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
     - "${CI_PROJECT_DIR}/sbt-cache/target"
-    policy: push
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
@@ -59,8 +58,6 @@ build:
     - "${CI_PROJECT_DIR}/sbt-cache/.boot"
     - "${CI_PROJECT_DIR}/sbt-cache/.sbtboot"
     - "${CI_PROJECT_DIR}/sbt-cache/target"
-    policy: push
-
   tags:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
