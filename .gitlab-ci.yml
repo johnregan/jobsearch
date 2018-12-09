@@ -5,7 +5,7 @@ stages:
 
 variables:  
   PROJECT_DIR: "${CI_PROJECT_DIR}/dbapi/dbapi"
-  IVY_LOCATION: "${CI_PROJECT_DIR}/.ivy2"
+  IVY_LOCATION: "~/.ivy2"
 
 lint:
   stage: lint
