@@ -5,7 +5,7 @@ stages:
 
 variables:  
   PROJECT_DIR: "${CI_PROJECT_DIR}/dbapi/dbapi"
-  IVY_LOCATION: "~/.ivy2"
+  IVY_LOCATION: "${CI_PROJECT_DIR}/.ivy2"
 
 lint:
   stage: lint
@@ -23,7 +23,8 @@ lint:
   script:
     - cd dbapi/dbapi/
     - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} clean scalastyle
-
+    - cd ../../
+    - ls -ltrah
 test:
   stage: test
   cache:
@@ -40,6 +41,8 @@ test:
   script:
     - cd dbapi/dbapi/
     - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} test   
+    - cd ../
+    - ls -ltrah
 
 build:
   stage: build
@@ -57,3 +60,4 @@ build:
   script:
     - cd dbapi/dbapi/
     - sbt -Dsbt.ivy.home=${IVY_LOCATION} -Divy.home=${IVY_LOCATION} assembly 
+    - ls -ltrah
