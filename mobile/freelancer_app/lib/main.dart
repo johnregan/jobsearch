@@ -4,15 +4,54 @@ import 'dart:convert';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(
+      title: 'Freelance job search',
+      home: HomeScreen(),
+    ));
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Select a programming language'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('View Results'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyApp()),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Freelancer jobs',
-      home: JobList(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Job listings"),
+      ),
+      body: MaterialApp(
+        title: 'Freelancer jobs',
+        home: JobList(),
+      ),
     );
+
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return MaterialApp(
+//      title: 'Freelancer jobs',
+//      home: JobList(),
+//    );
+//  }
   }
 }
 
@@ -33,7 +72,7 @@ class JobListState extends State<JobList> {
         });
   }
 
-  Widget _buildRow(Tuple2<String,Uri> job) {
+  Widget _buildRow(Tuple2<String, Uri> job) {
     return ListTile(
       title: Text(
         job.item1,
@@ -44,15 +83,14 @@ class JobListState extends State<JobList> {
   }
 
   void onTapped(Uri href) {
-    _launchURL;
+    _launchURL(href);
   }
 
-  _launchURL() async {
-    const url = 'https://flutter.io';
-    if (await canLaunch(url)) {
-      await launch(url);
+  _launchURL(Uri jobLink) async {
+    if (await canLaunch(jobLink.toString())) {
+      await launch(jobLink.toString());
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch ${jobLink.toString()}';
     }
   }
 
@@ -73,7 +111,8 @@ class JobListState extends State<JobList> {
         var rawString = new String.fromCharCodes(charCodes);
         var object = json.decode(rawString);
         setState(() {
-          _suggestions.add(Tuple2(object["description"], Uri.parse(object["href"])));
+          _suggestions
+              .add(Tuple2(object["description"], Uri.parse(object["href"])));
         });
       });
     });
@@ -82,9 +121,6 @@ class JobListState extends State<JobList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Freelancer jobs list'),
-      ),
       body: _buildSuggestions(),
     );
   }
