@@ -11,6 +11,8 @@ import io.circe.{Decoder, Encoder}
 import io.circe._
 import io.circe.syntax._
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import org.http4s
+import org.http4s.{circe, EntityEncoder}
 
 object JsonHandler {
   import cats.syntax.either._
@@ -20,6 +22,7 @@ object JsonHandler {
   implicit val decodeZdt: Decoder[ZonedDateTime] = Decoder.decodeString.emap { str =>
     Either.catchNonFatal(ZonedDateTime.parse(str)).leftMap(_ => "err")
   }
+
 }
 
 object DoobieHandler {
@@ -56,7 +59,12 @@ object IngestRequest {
   implicit val encoder: Encoder[IngestRequest] = deriveEncoder
 }
 
-case class Ingestion(id: UUID, href: String, description: String, createdDate: ZonedDateTime, source: String)
+case class Ingestion(id: UUID,
+                     href: String,
+                     description: String,
+                     createdDate: ZonedDateTime,
+                     source: String,
+                     language: String)
 
 object Ingestion {
   import JsonHandler._
@@ -73,11 +81,20 @@ class IngestionRepository[F[_]](xa: Transactor[F])(implicit F: Effect[F]) {
   import doobie.implicits._
   import doobie.postgres.implicits._
 
-  def getAll(): fs2.Stream[F, Ingestion] =
-    sql"""SELECT * FROM ingestions ORDER BY created_date DESC""".query[Ingestion].stream.transact(xa)
+  def getIngestions(language: String): fs2.Stream[F, Ingestion] =
+    sql"""SELECT * FROM ingestions WHERE language = $language ORDER BY created_date DESC"""
+      .query[Ingestion]
+      .stream
+      .transact(xa)
+
+  def getLanguages: F[List[String]] =
+    sql"""SELECT * FROM languages"""
+      .query[String]
+      .to[List]
+      .transact(xa)
 
   def insert(ingestions: NonEmptyList[Ingestion]): F[Int] =
     Update[Ingestion](
-      "insert into ingestions (id, href, description, created_date, source) values (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING"
+      "insert into ingestions (id, href, description, created_date, source, language) values (?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING"
     ).updateMany(ingestions).transact(xa)
 }

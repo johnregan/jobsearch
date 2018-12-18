@@ -12,16 +12,23 @@ import org.http4s._
 import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
+import JsonHandler._
+import io.circe._
+import io.circe.Json
+import org.http4s
 
-class HelloWorldService[F[_]: Sync](repository: IngestionRepository[F]) extends Http4sDsl[F] with LazyLogging {
+class IngestionService[F[_]: Sync](repository: IngestionRepository[F])
+    extends Http4sDsl[F]
+    with LazyLogging
+    with Http4sInstances {
 
   val service: HttpService[F] = {
     HttpService[F] {
-      case req @ PUT -> Root / "ingest" / source =>
+      case req @ PUT -> Root / "ingest" / "language" / language / "source" / source =>
         req.as[Ingestions].flatMap { is =>
           val potentailRecords = is.jobEntries.map {
             case IngestRequest(href, description) =>
-              Ingestion(UUID.randomUUID(), href, description, ZonedDateTime.now(), source)
+              Ingestion(UUID.randomUUID(), href, description, ZonedDateTime.now(), source, language)
           }
 
           repository.insert(potentailRecords).attempt.flatMap {
@@ -33,8 +40,12 @@ class HelloWorldService[F[_]: Sync](repository: IngestionRepository[F]) extends 
               BadRequest("Error encountered when writing to the database")
           }
         }
-      case GET -> Root / "jobs" / "stream" =>
-        Ok(repository.getAll().map(_.asJson))
+      case GET -> Root / "jobs" / "language" / language =>
+        Ok(repository.getIngestions(language).map(_.asJson))
+      case GET -> Root / "languages" =>
+        repository.getLanguages.flatMap { ls =>
+          Ok(ls.asJson)
+        }
     }
   }
 }

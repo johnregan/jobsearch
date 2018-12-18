@@ -22,7 +22,6 @@ object HelloWorldServer extends StreamApp[IO] {
     } yield {
       ec
     }
-
 }
 
 object ServerStream {
@@ -39,12 +38,12 @@ object ServerStream {
 
   def ingestionRepository[F[_]: Effect](xa: Transactor[F]): IngestionRepository[F] = new IngestionRepository[F](xa)
 
-  def helloWorldService[F[_]: Effect](ingestionRepository: IngestionRepository[F]): HttpService[F] =
-    new HelloWorldService[F](ingestionRepository).service
+  def ingestionService[F[_]: Effect](ingestionRepository: IngestionRepository[F]): HttpService[F] =
+    new IngestionService[F](ingestionRepository).service
 
   def stream[F[_]: Effect](xa: Transactor[F])(implicit ec: ExecutionContext): fs2.Stream[F, StreamApp.ExitCode] =
     BlazeBuilder[F]
       .bindHttp(8080, "0.0.0.0")
-      .mountService(helloWorldService(ingestionRepository(xa)), "/")
+      .mountService(ingestionService(ingestionRepository(xa)), "/")
       .serve
 }

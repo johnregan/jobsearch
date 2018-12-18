@@ -110,6 +110,7 @@ project/boot/
 project/plugins/project/
 sbt-cache
 *.out
+.metals
 
 # Scala-IDE specific
 .scala_dependencies
