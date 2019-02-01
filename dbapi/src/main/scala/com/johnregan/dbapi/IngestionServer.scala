@@ -28,7 +28,7 @@ object ServerStream {
   val hikariConfig: HikariConfig = {
     val config = new HikariConfig()
     config.setJdbcUrl("jdbc:postgresql://localhost:5432/freelancedb")
-    config.setUsername("postgres")
+    config.setUsername("jr")
     config.setPassword("")
     config
   }

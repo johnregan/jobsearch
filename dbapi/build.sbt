@@ -4,6 +4,11 @@ val LogbackVersion = "1.2.3"
 val ScalaLogging = "3.9.0"
 val FlywayVersion = "5.2.4"
 val DoobieVersion = "0.5.3"
+val PostgresVersion = "42.2.2"
+val CirceVersion = "0.9.3"
+val HikariCPVersion = "3.2.0"
+val NewtypeVersion = "0.4.2"
+val RefinedVersion = "0.9.4"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:higherKinds")
 
@@ -16,8 +21,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
       "org.http4s" %% "http4s-circe" % Http4sVersion,
-      "io.circe" %% "circe-generic" % "0.9.3",
-      "io.circe" %% "circe-literal" % "0.9.3",
+      "io.circe" %% "circe-generic" % CirceVersion,
+      "io.circe" %% "circe-literal" % CirceVersion,
       "org.http4s" %% "http4s-dsl" % Http4sVersion,
       "org.specs2" %% "specs2-core" % Specs2Version % "test",
       "com.typesafe.scala-logging" %% "scala-logging" % ScalaLogging,
@@ -25,14 +30,15 @@ lazy val root = (project in file("."))
       "org.flywaydb" % "flyway-core" % FlywayVersion,
       "org.tpolecat" %% "doobie-core" % DoobieVersion,
       "org.tpolecat" %% "doobie-postgres" % DoobieVersion,
-      "com.zaxxer" % "HikariCP" % "3.2.0",
-      "org.postgresql" % "postgresql" % "42.2.2"
+      "com.zaxxer" % "HikariCP" % HikariCPVersion,
+      "org.postgresql" % "postgresql" % PostgresVersion,
+      "io.estatico" %% "newtype" % NewtypeVersion,
+      "eu.timepit" %% "refined" % "0.9.4"
     ),
     scalastyleFailOnError := true,
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4"),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
   )
 
 mainClass in assembly := Some("com.johnregan.dbapi.HelloWorldServer")
-

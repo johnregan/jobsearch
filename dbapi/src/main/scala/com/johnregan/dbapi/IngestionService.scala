@@ -27,8 +27,8 @@ class IngestionService[F[_]: Sync](repository: IngestionRepository[F])
       case req @ PUT -> Root / "ingest" / "language" / language / "source" / source =>
         req.as[Ingestions].flatMap { is =>
           val potentailRecords = is.jobEntries.map {
-            case IngestRequest(href, description) =>
-              Ingestion(UUID.randomUUID(), href, description, ZonedDateTime.now(), source, language)
+            case IngestRequest(href, title, description, salaryDescription) =>
+              Ingestion(UUID.randomUUID(), title, href, description, salaryDescription, ZonedDateTime.now(), source, language)
           }
 
           repository.insert(potentailRecords).attempt.flatMap {

@@ -1,18 +1,15 @@
 package com.johnregan.dbapi
 
-import java.time.{LocalDateTime, ZoneOffset, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
 
 import cats.data._
 import cats.effect.Effect
+import com.johnregan.dbapi.TaggedTypes.{Description, Href, SalaryDescription, Title}
 import doobie._
-import io.circe.{Decoder, Encoder}
-import io.circe._
-import io.circe.syntax._
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
-import org.http4s
-import org.http4s.{circe, EntityEncoder}
+import io.circe.{Decoder, Encoder}
 
 object JsonHandler {
   import cats.syntax.either._
@@ -22,17 +19,17 @@ object JsonHandler {
   implicit val decodeZdt: Decoder[ZonedDateTime] = Decoder.decodeString.emap { str =>
     Either.catchNonFatal(ZonedDateTime.parse(str)).leftMap(_ => "err")
   }
-
 }
 
 object DoobieHandler {
-  import cats._
-  import cats.implicits._
-  import doobie.implicits._
-  import cats.implicits._
-  import org.postgresql.util.PGobject
-  import doobie.postgres.implicits._
   import doobie.util.meta.Meta
+
+//  No TypeTag available for .............
+//  implicit val metaHref: Meta[Href] =
+//    Meta[String].xmap(
+//      href => Href(href),
+//      href => href.url
+//    )
 
   implicit val mDateTimeMeta: Meta[ZonedDateTime] =
     Meta[java.sql.Timestamp].xmap(
@@ -42,42 +39,45 @@ object DoobieHandler {
 }
 
 case class Ingestions(jobEntries: NonEmptyList[IngestRequest])
-
 object Ingestions {
-  import JsonHandler._
 
   implicit val decoder: Decoder[Ingestions] = deriveDecoder
   implicit val encoder: Encoder[Ingestions] = deriveEncoder
 }
 
-case class IngestRequest(href: String, description: String)
-
+case class IngestRequest(href: Href, title:Title, description: Description, salaryDescription:SalaryDescription)
 object IngestRequest {
-  import JsonHandler._
 
   implicit val decoder: Decoder[IngestRequest] = deriveDecoder
   implicit val encoder: Encoder[IngestRequest] = deriveEncoder
 }
 
 case class Ingestion(id: UUID,
+                     title: String,
                      href: String,
                      description: String,
+                     salary:String,
                      createdDate: ZonedDateTime,
                      source: String,
                      language: String)
-
 object Ingestion {
   import JsonHandler._
+
+  def apply(id: UUID,
+            title: Title,
+            href: Href,
+            description: Description,
+            salary:SalaryDescription,
+            createdDate: ZonedDateTime,
+            source: String,
+            language: String): Ingestion = new Ingestion(id, title.value, href.url, description.value, salary.value, createdDate, source, language)
 
   implicit val decoder: Decoder[Ingestion] = deriveDecoder
   implicit val encoder: Encoder[Ingestion] = deriveEncoder
 }
 
 class IngestionRepository[F[_]](xa: Transactor[F])(implicit F: Effect[F]) {
-  import cats.Foldable._
   import DoobieHandler._
-  import cats._
-  import cats.implicits._
   import doobie.implicits._
   import doobie.postgres.implicits._
 
@@ -95,6 +95,6 @@ class IngestionRepository[F[_]](xa: Transactor[F])(implicit F: Effect[F]) {
 
   def insert(ingestions: NonEmptyList[Ingestion]): F[Int] =
     Update[Ingestion](
-      "insert into ingestions (id, href, description, created_date, source, language) values (?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING"
+      "insert into ingestions (id, title, href, description, salary, created_date, source, language) values (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING"
     ).updateMany(ingestions).transact(xa)
 }

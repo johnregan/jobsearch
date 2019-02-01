@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'model.dart';
 
 void main() => runApp(MaterialApp(
       title: 'Freelance job search',
@@ -131,9 +132,10 @@ class JobListState extends State<JobList> {
 
   JobListState({@required this.language}) : super();
 
-  final _suggestions = <Tuple2<String, Uri>>[];
+  final List<JobEntry> _suggestions = new List();
 
-  final _biggerFont = const TextStyle(fontSize: 18.0);
+  final _titleFont = const TextStyle(fontSize: 16.0);
+  final _subtitleFont = const TextStyle(fontSize: 12.0);
 
   Widget _buildSuggestions() {
     return ListView.builder(
@@ -147,14 +149,29 @@ class JobListState extends State<JobList> {
         });
   }
 
-  Widget _buildRow(Tuple2<String, Uri> job) {
+  Widget _buildRow(JobEntry job) {
+    var title = "${job.title} ${job.salary}";
     return ListTile(
       title: Text(
-        job.item1,
-        style: _biggerFont,
+        title,
+        style: _titleFont,
       ),
-      onTap: () => onTapped(job.item2),
+      subtitle: Text(
+        job.description,
+        style: _subtitleFont,
+      ),
+      onLongPress: () => onHoldButton(title,job.description),
+      onTap: () => onTapped(job.href),
     );
+  }
+
+  GestureLongPressCallback onHoldButton(String title, String description) {
+    showDialog(
+        context: context,
+        child: new AlertDialog(
+          title: new Text(title),
+          content: new Text(description),
+        ));
   }
 
   void onTapped(Uri href) {
@@ -183,12 +200,11 @@ class JobListState extends State<JobList> {
         .then((HttpClientRequest request) {
       return request.close();
     }).then((HttpClientResponse response) {
-      response.forEach((charCodes) {
-        var rawString = new String.fromCharCodes(charCodes);
-        var object = json.decode(rawString);
+      response.transform(utf8.decoder).listen((contents) {
+        var object = json.decode(contents);
         setState(() {
-          _suggestions
-              .add(Tuple2(object["description"], Uri.parse(object["href"])));
+          _suggestions.add(JobEntry(object["title"], object["description"],
+              Uri.parse(object["href"]), object["salary"], object["source"]));
         });
       });
     });

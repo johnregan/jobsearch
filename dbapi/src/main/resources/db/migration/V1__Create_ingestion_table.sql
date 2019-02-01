@@ -6,8 +6,10 @@ INSERT INTO languages(id) VALUES ('scala'),('java'),('python'),('javascript'),('
 
 CREATE TABLE ingestions (
     id UUID NOT NULL PRIMARY KEY,
+    title VARCHAR NOT NULL,
     href VARCHAR NOT NULL UNIQUE,
     description VARCHAR NOT NULL UNIQUE,
+    salary VARCHAR NOT NULL,
     created_date TIMESTAMP NOT NULL,
     source VARCHAR(50) NOT NULL,
     language VARCHAR(50) NOT NULL REFERENCES languages(id)
