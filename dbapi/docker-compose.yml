@@ -1,0 +1,16 @@
+version: '3'
+services:
+  postgres:
+    image: "postgres:9.6"
+    container_name: "freelancer_postgres"
+    ports:
+    - "5432:5432"
+    volumes:
+    - postgresql:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_USER=jr
+    - POSTGRES_DB=freelancedb
+
+volumes:
+  postgresql:
+    driver: local
