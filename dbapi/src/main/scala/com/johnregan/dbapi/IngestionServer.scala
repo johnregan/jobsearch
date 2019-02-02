@@ -1,6 +1,7 @@
 package com.johnregan.dbapi
 
 import cats.effect.{Effect, IO}
+import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import doobie.util.transactor.Transactor
 import fs2.StreamApp
@@ -25,11 +26,14 @@ object HelloWorldServer extends StreamApp[IO] {
 }
 
 object ServerStream {
+  val factory = ConfigFactory.load()
+  val dbConfig = factory.getConfig("db")
+
   val hikariConfig: HikariConfig = {
     val config = new HikariConfig()
-    config.setJdbcUrl("jdbc:postgresql://localhost:5432/freelancedb")
-    config.setUsername("jr")
-    config.setPassword("")
+    config.setJdbcUrl(dbConfig.getString("jdbcUrl"))
+    config.setUsername(dbConfig.getString("username"))
+    config.setPassword(dbConfig.getString("password"))
     config
   }
 

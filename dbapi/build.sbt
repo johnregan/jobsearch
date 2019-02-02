@@ -9,6 +9,7 @@ val CirceVersion = "0.9.3"
 val HikariCPVersion = "3.2.0"
 val NewtypeVersion = "0.4.2"
 val RefinedVersion = "0.9.4"
+val TypesafeConfigVersion = "1.3.2"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:higherKinds")
 
@@ -33,7 +34,8 @@ lazy val root = (project in file("."))
       "com.zaxxer" % "HikariCP" % HikariCPVersion,
       "org.postgresql" % "postgresql" % PostgresVersion,
       "io.estatico" %% "newtype" % NewtypeVersion,
-      "eu.timepit" %% "refined" % "0.9.4"
+      "eu.timepit" %% "refined" % RefinedVersion,
+      "com.typesafe" % "config" % TypesafeConfigVersion
     ),
     scalastyleFailOnError := true,
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),
