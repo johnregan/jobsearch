@@ -32,7 +32,7 @@ test:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
   script:
-    - cd dbapi/dbapi/
+    - cd dbapi
     - sbt test   
 
 build:
@@ -41,5 +41,5 @@ build:
     - kubernetes
   image: hseeberger/scala-sbt:8u181_2.12.7_1.2.6
   script:
-    - cd dbapi/dbapi/
+    - cd dbapi
     - sbt assembly 
