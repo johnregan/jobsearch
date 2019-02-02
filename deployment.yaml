@@ -31,6 +31,9 @@ spec:
       - name: secretvolume
         secret:
           secretName: dbconfig
+      - name: cloudsql-instance-credentials
+        secret:
+          secretName: cloudsqlproxy    
       containers:
       - image: eu.gcr.io/jobsearch-225012/dbapi:latest
         imagePullPolicy: Always
@@ -40,11 +43,35 @@ spec:
           protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        terminationMessagePolicy: File       
+        env:
+        - name: CLOUDSQL_USERNAME_URL
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: username
+        - name: CLOUDSQL_PASSWORD_URL
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: CLOUDSQL_JDBC_URL
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: jdbc
+      - name: cloudsql-proxy     
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                "-instances=jobsearch-225012:europe-west1:jobdatastore=tcp:5432",
+                "-credential_file=/secrets/cloudsql/cloudsqlclient.json"]
+        securityContext:
+          runAsUser: 2  # non-root user
+          allowPrivilegeEscalation: false
         volumeMounts:
-        - name: secretvolume
-          mountPath: "/etc/secretvolume"
-          readOnly: true       
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true       
       dnsPolicy: ClusterFirst      
       restartPolicy: Always
       schedulerName: default-scheduler

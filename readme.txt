@@ -1,4 +1,7 @@
+Create secret
 
+kubectl create secret generic dbconfig --from-env-file=./dbenv.txt
+kubectl create secret generic cloudsqlproxy --from-file=./cloudsqlclient.json
 
 View kubernetes dashboard
 

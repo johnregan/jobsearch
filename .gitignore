@@ -143,6 +143,5 @@ scrapers
 
 
 #credentials
-jdbc.txt
-password.txt
-username.txt
+dbenv.txt
+cloudsqlclient.json
