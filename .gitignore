@@ -140,3 +140,9 @@ bin/
 
 ### exlcude scrapers
 scrapers
+
+
+#credentials
+jdbc.txt
+password.txt
+username.txt
